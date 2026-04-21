@@ -279,7 +279,8 @@ select:focus{border-color:var(--a);}
       <div class="card" onclick="selMode(this,'bot')"><div class="card-ico">🤖</div><div class="card-name">BOT DUEL</div><div class="card-desc">Bots avec IA qui strafent</div></div>
     </div>
     <div class="settings-grid">
-      <div class="param"><div class="param-lbl">Durée <span id="ld">60s</span></div><input type="range" min="15" max="300" step="15" value="60" oninput="cfg.duration=+this.value;document.getElementById('ld').textContent=this.value+'s'"></div>
+      <div class="param"><div class="param-lbl">Durée <span id="ld" style="opacity:1">60s</span></div><input type="range" id="durationSlider" min="15" max="300" step="15" value="60" oninput="cfg.duration=+this.value;document.getElementById('ld').textContent=this.value+'s';document.getElementById('ld').style.opacity=cfg.infiniteMode?'0.5':'1'"></div>
+      <div class="toggle-row"><span class="tlbl">Mode boucle illimité</span><div class="tog" id="tog-inf-mode" onclick="togInfiniteMode(this)"></div></div>
       <div class="param"><div class="param-lbl">Cibles max <span id="ltgt">3</span></div><input type="range" min="1" max="8" value="3" oninput="cfg.maxTargets=+this.value;document.getElementById('ltgt').textContent=this.value"></div>
       <div class="param"><div class="param-lbl">Taille cibles <span id="lsz">Moyen</span></div><input type="range" min="1" max="5" value="3" oninput="setSz(+this.value)"></div>
       <div class="param"><div class="param-lbl">HP bots <span id="lhp">100</span></div><input type="range" min="50" max="500" step="25" value="100" oninput="cfg.botHP=+this.value;document.getElementById('lhp').textContent=this.value"></div>
@@ -396,6 +397,10 @@ select:focus{border-color:var(--a);}
             <option value="midnight">Minuit</option>
             <option value="military">Militaire</option>
             <option value="neon">Neon</option>
+            <option value="blood">Crimson Night</option>
+            <option value="ice">Glacier</option>
+            <option value="matrix">Matrix</option>
+            <option value="sunset">Coucher de soleil</option>
           </select>
         </div>
         <div class="param"><div class="param-lbl">Opacité HUD <span id="lhudo">100%</span></div><input type="range" min="30" max="100" value="100" oninput="cfg.hudOpacity=+this.value/100;document.getElementById('lhudo').textContent=this.value+'%';document.documentElement.style.setProperty('--ui-opacity',cfg.hudOpacity)"></div>
@@ -478,7 +483,7 @@ select:focus{border-color:var(--a);}
   </div>
 </div>
 
-<div id="pause"><div class="ptitle">PAUSE</div><button class="pbtn pri" onclick="resume()">REPRENDRE</button><button class="pbtn" onclick="endSess()">TERMINER</button><button class="pbtn" onclick="backMenu()">MENU</button></div>
+<div id="pause"><div class="ptitle">PAUSE</div><button class="pbtn pri" onclick="resume()">REPRENDRE</button><button class="pbtn" onclick="endSess()">TERMINER</button><button class="pbtn" onclick="openWeaponMenu()">CHANGER ARME</button><button class="pbtn" onclick="backMenu()">MENU</button></div>
 <div id="results">
   <div class="rmode" id="rmode"></div>
   <div class="rgrade" id="rgrade">S</div>
@@ -504,7 +509,7 @@ select:focus{border-color:var(--a);}
 // CONFIG
 // ════════════════════════════════════════════════════════════
 const cfg = {
-  map:'range', mode:'precision', duration:60, maxTargets:3,
+  map:'range', mode:'precision', duration:60, maxTargets:3, infiniteMode:false,
   sizeLevel:3, botHP:100,
   weapon1:'vandal', weapon2:'ghost', meleeKey:'knife',
   sens:0.40, adsSensMult:0.80, scopeSensMult:0.50,
@@ -616,7 +621,7 @@ function setLoadout(l){const map={duelist:['vandal','ghost'],sniper:['operator',
 
 // UI color
 function setUIColor(a,a2,el){document.documentElement.style.setProperty('--a',a);document.documentElement.style.setProperty('--a2',a2);document.querySelectorAll('.color-row:nth-child(1) .color-swatch').forEach(s=>s.classList.remove('on'));el.classList.add('on');}
-function setTheme(t){const themes={dark:{bg:'#080810',bg2:'#0f0f1a'},midnight:{bg:'#030308',bg2:'#08080f'},military:{bg:'#0a0f08',bg2:'#0f1a0f'},neon:{bg:'#04040f',bg2:'#0a0a1f'}};const th=themes[t]||themes.dark;document.documentElement.style.setProperty('--bg',th.bg);document.documentElement.style.setProperty('--bg2',th.bg2);}
+function setTheme(t){const themes={dark:{bg:'#080810',bg2:'#0f0f1a'},midnight:{bg:'#030308',bg2:'#08080f'},military:{bg:'#0a0f08',bg2:'#0f1a0f'},neon:{bg:'#04040f',bg2:'#0a0a1f'},blood:{bg:'#1a0505',bg2:'#2a0808'},ice:{bg:'#050810',bg2:'#0a1020'},matrix:{bg:'#000800',bg2:'#001a00'},sunset:{bg:'#1a0f00',bg2:'#2a1a05'}};const th=themes[t]||themes.dark;document.documentElement.style.setProperty('--bg',th.bg);document.documentElement.style.setProperty('--bg2',th.bg2);}
 
 // Crosshair
 function setCXColor(c,el){cfg.cxColor=c;document.querySelectorAll('#cx-colors .color-swatch').forEach(s=>s.classList.remove('on'));el.classList.add('on');previewCX();}
@@ -692,6 +697,11 @@ let frameThrottle=0;
 const keys={w:false,a:false,s:false,d:false,shift:false,space:false};
 const playerVel=new THREE.Vector3();
 const PLAYER_SPEED=6.5;
+let playerVelY=0;
+let isGrounded=true;
+const JUMP_FORCE=12;
+const GRAVITY=35;
+let lastSpacePressed=false;
 
 // Game state
 const gs={
@@ -903,7 +913,7 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.02,0.25,0.015),metalM,0,0,0);
     addP(new THREE.BoxGeometry(0.03,0.12,0.02),darkM,0,-0.19,0);
     addP(new THREE.BoxGeometry(0.055,0.015,0.02),metalM,0,-0.13,0);
-    g.position.set(0.12,-0.15,-0.3);g.rotation.set(-0.2,0,0.3);
+    g.position.set(-0.12,-0.15,-0.3);g.rotation.set(-0.2,0,-0.3);
   } else if(w.cat==='sniper'){
     // SNIPER
     const bLen=key==='operator'?1.3:key==='outlaw'?1.1:1.0;
@@ -918,7 +928,7 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.04,0.11,0.06),bodyM,0.12,-0.09,0);
     // Suppressor (operator)
     if(key==='operator')addP(new THREE.CylinderGeometry(0.04,0.04,0.12,8),metalM,bLen+0.06,0,0,0,0,Math.PI/2);
-    g.position.set(0.28,-0.24,-0.56);
+    g.position.set(-0.28,-0.24,-0.56);g.rotation.z=Math.PI/2;
   } else if(w.cat==='sidearm'||key==='ghost'||key==='sheriff'){
     const bLen=key==='sheriff'?0.46:0.3;
     addP(new THREE.CylinderGeometry(0.022,0.022,bLen,8),metalM,bLen/2,0.01,0,0,0,Math.PI/2);
@@ -928,7 +938,7 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.04,0.12,0.04),bodyM,-0.1,-0.12,0);
     addP(new THREE.BoxGeometry(0.015,0.06,0.02),metalM,-0.04,-0.05,0,0.3,0,0);
     addP(new THREE.BoxGeometry(0.015,0.025,0.04),accM,bLen*0.8,0.07,0);
-    g.position.set(0.25,-0.26,-0.38);
+    g.position.set(-0.25,-0.26,-0.38);g.rotation.z=Math.PI/2;
   } else if(w.cat==='smg'){
     addP(new THREE.CylinderGeometry(0.022,0.022,0.48,8),metalM,0.24,0,0,0,0,Math.PI/2);
     addP(new THREE.BoxGeometry(0.56,0.1,0.065),bodyM,0,0.01,0);
@@ -937,14 +947,14 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.15,0.06,0.05),darkM,-0.27,0.02,0);
     addP(new THREE.BoxGeometry(0.025,0.025,0.04),accM,0.22,0.07,0);
     addP(new THREE.BoxGeometry(0.02,0.11,0.068),accM,0.1,0,0);
-    g.position.set(0.26,-0.23,-0.44);
+    g.position.set(-0.26,-0.23,-0.44);g.rotation.z=Math.PI/2;
   } else if(w.cat==='shotgun'){
     addP(new THREE.CylinderGeometry(0.03,0.03,0.7,8),metalM,0.35,0,0,0,0,Math.PI/2);
     addP(new THREE.BoxGeometry(0.6,0.12,0.07),bodyM,0,0,0);
     addP(new THREE.BoxGeometry(0.25,0.09,0.06),darkM,-0.28,0.02,0);
     addP(new THREE.BoxGeometry(0.06,0.16,0.07),darkM,-0.12,-0.1,0);
     if(key==='judge')addP(new THREE.BoxGeometry(0.04,0.18,0.06),bodyM,0.05,-0.12,0);
-    g.position.set(0.28,-0.23,-0.48);
+    g.position.set(-0.28,-0.23,-0.48);g.rotation.z=Math.PI/2;
   } else if(w.cat==='heavy'){
     addP(new THREE.CylinderGeometry(0.03,0.03,key==='odin'?1.0:0.8,8),metalM,key==='odin'?0.5:0.4,0.01,0,0,0,Math.PI/2);
     addP(new THREE.BoxGeometry(key==='odin'?0.75:0.7,0.13,0.08),bodyM,0,0,0);
@@ -954,7 +964,7 @@ function buildWepModel(key,w){
     // Bipod
     addP(new THREE.BoxGeometry(0.015,0.12,0.005),metalM,0.35,-0.07,-0.02);
     addP(new THREE.BoxGeometry(0.015,0.12,0.005),metalM,0.35,-0.07,0.02);
-    g.position.set(0.3,-0.24,-0.52);
+    g.position.set(-0.3,-0.24,-0.52);g.rotation.z=Math.PI/2;
   } else {
     // RIFLES (vandal,phantom,bulldog,guardian)
     const bLen=key==='bulldog'?0.55:key==='guardian'?0.7:0.65;
@@ -974,7 +984,7 @@ function buildWepModel(key,w){
       addP(new THREE.CircleGeometry(0.032,16),lM,0.17,0.12,0,0,-Math.PI/2,0);
     }
     if(key==='bulldog'){addP(new THREE.CylinderGeometry(0.03,0.03,0.08,6),metalM,bLen+0.04,0.005,0,0,0,Math.PI/2);}
-    g.position.set(0.28,-0.22,-0.48);
+    g.position.set(-0.28,-0.22,-0.48);g.rotation.z=Math.PI/2;
   }
   return g;
 }
@@ -1331,8 +1341,8 @@ function applyRecoil(){
   const idx=Math.min(gs.shotsFired-1,w.rc.length-1);
   const rc=w.rc[idx];
   const m=gs.ads?w.rcMult*0.45:w.rcMult;
-  // Strong upward pitch recoil
-  recoilPV+=rc.y*0.0022*m;
+  // Strong upward pitch recoil (negative = up)
+  recoilPV-=rc.y*0.0022*m;
   recoilYV+=rc.x*0.0008*m;
   // Visual kick on weapon
   if(wepGroup){wepGroup.rotation.x-=0.06*m;wepGroup.position.z-=0.015*m;}
@@ -1552,7 +1562,7 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   if(k==='w')keys.w=true;if(k==='a')keys.a=true;
   if(k==='s')keys.s=true;if(k==='d')keys.d=true;
-  if(k==='shift')keys.shift=true;if(k===' ')keys.space=true;
+  if(k==='shift')keys.shift=true;if(k===' '){keys.space=true;if(isGrounded&&gameActive&&!gamePaused&&!lastSpacePressed){playerVelY=JUMP_FORCE;isGrounded=false;lastSpacePressed=true;}}
   if(k==='r'&&gameActive&&!gamePaused)triggerReload();
   if(k==='1')switchSlot(0);if(k==='2')switchSlot(1);if(k==='3')switchSlot(2);
   if(e.key==='Escape'){
@@ -1563,7 +1573,7 @@ document.addEventListener('keyup',e=>{
   const k=e.key.toLowerCase();
   if(k==='w')keys.w=false;if(k==='a')keys.a=false;
   if(k==='s')keys.s=false;if(k==='d')keys.d=false;
-  if(k==='shift')keys.shift=false;if(k===' ')keys.space=false;
+  if(k==='shift')keys.shift=false;if(k===' '){keys.space=false;lastSpacePressed=false;}
 });
 
 // ── MOVEMENT ──
@@ -1571,20 +1581,32 @@ const V=new THREE.Vector3();
 const moveDir=new THREE.Vector3();
 function updateMovement(dt){
   if(!cfg.movement)return;
+  // Gravity & jump
+  playerVelY-=GRAVITY*dt;
+  camera.position.y=Math.max(1.7,camera.position.y+playerVelY*dt);
+  if(camera.position.y<=1.7){camera.position.y=1.7;playerVelY=0;isGrounded=true;}
+  
   V.set(0,0,0);
   if(keys.w)V.z-=1;if(keys.s)V.z+=1;
   if(keys.a)V.x-=1;if(keys.d)V.x+=1;
-  if(V.lengthSq()===0)return;
+  if(V.lengthSq()===0&&!keys.w&&!keys.a&&!keys.s&&!keys.d)return;
   V.normalize();
   const spd=keys.shift?PLAYER_SPEED*1.8:PLAYER_SPEED;
   // Camera forward direction (flattened)
   const yaw=new THREE.Euler(0,camYaw,0);
   moveDir.set(V.x,0,V.z).applyEuler(yaw);
-  camera.position.addScaledVector(moveDir,spd*dt);
-  // Bounds
-  camera.position.x=Math.max(-18,Math.min(18,camera.position.x));
-  camera.position.z=Math.max(-22,Math.min(10,camera.position.z));
-  camera.position.y=1.7;
+  const newX=camera.position.x+moveDir.x*spd*dt;
+  const newZ=camera.position.z+moveDir.z*spd*dt;
+  // Collision detection with walls
+  let canMoveX=true,canMoveZ=true;
+  if(cfg.map==='range'){canMoveX=newX>=-14.5&&newX<=14.5;canMoveZ=newZ>=-22&&newZ<=10;}
+  else if(cfg.map==='longrange'){canMoveX=newX>=-6.5&&newX<=6.5;canMoveZ=newZ>=-40&&newZ<=30;}
+  else if(cfg.map==='melee'){canMoveX=newX>=-9.5&&newX<=9.5;canMoveZ=newZ>=-19&&newZ<=10;}
+  else if(cfg.map==='box'){canMoveX=newX>=-11.5&&newX<=11.5;canMoveZ=newZ>=-23.5&&newZ<=12;}
+  else if(cfg.map==='skybox'){const distSq=newX*newX+newZ*newZ;canMoveX=canMoveZ=distSq<=(20*20);}
+  else if(cfg.map==='corridor'){canMoveX=newX>=-4.5&&newX<=4.5;canMoveZ=newZ>=-21&&newZ<=12;}
+  if(canMoveX)camera.position.x=newX;
+  if(canMoveZ)camera.position.z=newZ;
   // Show move hint briefly
   const mv=document.getElementById('move');mv.classList.add('on');
   clearTimeout(mv._t);mv._t=setTimeout(()=>mv.classList.remove('on'),1200);
@@ -1648,6 +1670,10 @@ function gameLoop(now){
 let timerInt=null;
 function startTimer(){
   gs.timer=cfg.duration;clearInterval(timerInt);
+  if(cfg.infiniteMode){
+    if(cfg.showTimer)document.getElementById('htimer').textContent='∞';
+    return;
+  }
   timerInt=setInterval(()=>{
     if(gamePaused)return;
     gs.timer-=0.1;
@@ -1658,6 +1684,12 @@ function startTimer(){
     }
     if(gs.timer<=0){clearInterval(timerInt);endSess();}
   },100);
+}
+
+function togInfiniteMode(el){
+  el.classList.toggle('on');cfg.infiniteMode=el.classList.contains('on');
+  const lb=document.getElementById('ld');
+  lb.style.opacity=cfg.infiniteMode?'0.5':'1';
 }
 
 // ── SESSION ──
@@ -1698,6 +1730,35 @@ function launch(){
 }
 
 function pauseGame(){gamePaused=true;document.getElementById('pause').classList.add('on');}
+
+function openWeaponMenu(){
+  const choices=[];
+  PRIMARIES.forEach(k=>{choices.push({name:WEAPONS[k].name,key:k,slot:0});});
+  SIDEARMS.forEach(k=>{choices.push({name:WEAPONS[k].name,key:k,slot:1});});
+  choices.push({name:WEAPONS.knife.name,key:'knife',slot:2});
+  const current=[cfg.weapon1,cfg.weapon2,cfg.meleeKey];
+  const dialogHtml=`<div style="position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;" id="weaponDialog"><div style="background:#0f0f1a;border:1px solid #ff4655;padding:20px;border-radius:4px;max-height:80vh;overflow-y:auto;width:90%;max-width:400px;"><div style="font-size:18px;color:#ff4655;margin-bottom:16px;letter-spacing:2px;font-weight:700;">CHANGER ARME</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">${choices.map(c=>`<button onclick="switchWeaponInGame(this,'${c.key}',${c.slot})" style="background:${current[c.slot]===c.key?'rgba(255,70,85,0.3)':'rgba(255,255,255,0.05)'};border:1px solid ${current[c.slot]===c.key?'#ff4655':'rgba(255,255,255,0.1)'};padding:10px;color:#e8e8f0;cursor:pointer;border-radius:2px;font-family:Rajdhani;font-size:12px;letter-spacing:1px;">${c.name}</button>`).join('')}</div><button onclick="closeWeaponDialog()" style="width:100%;margin-top:12px;padding:10px;background:#ff4655;border:none;color:white;cursor:pointer;border-radius:2px;font-family:Rajdhani;font-size:12px;letter-spacing:1px;">FERMER</button></div></div>`;
+  document.body.insertAdjacentHTML('beforeend',dialogHtml);
+}
+
+function switchWeaponInGame(el,key,slot){
+  if(slot===0)cfg.weapon1=key;
+  else if(slot===1)cfg.weapon2=key;
+  else cfg.meleeKey=key;
+  SLOTS[slot]=key;
+  if(gs.slot===slot)buildWeapon(key);
+  document.querySelectorAll('#weaponDialog button').forEach(b=>{
+    const text=b.textContent.trim();
+    b.style.background=text===WEAPONS[key].name?'rgba(255,70,85,0.3)':'rgba(255,255,255,0.05)';
+    b.style.borderColor=text===WEAPONS[key].name?'#ff4655':'rgba(255,255,255,0.1)';
+  });
+  updateWepHUD();
+}
+
+function closeWeaponDialog(){
+  const d=document.getElementById('weaponDialog');
+  if(d)d.remove();
+}
 function resume(){gamePaused=false;document.getElementById('pause').classList.remove('on');requestPL();}
 
 function endSess(){
