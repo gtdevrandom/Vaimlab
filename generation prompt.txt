@@ -1,1 +1,0 @@
-le recoil bug il va vers le bas alors qu'un recoil d'arme va vers le haut en theorie, ajoute le bouton menu quand on fait pause, il faut pouvoir changer l'arme dans la salle d'entrainement, ajoute des theme, ajouter le jump, et collisions, tourner les armes de 90° vers la gauche, ne pas etre obligé de mettre un temps si on veut s'entrainer en boucle sur un exercice
