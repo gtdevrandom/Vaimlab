@@ -1624,7 +1624,14 @@ document.addEventListener('keydown',e=>{
   if(k==='r'&&gameActive&&!gamePaused)triggerReload();
   if(k==='1')switchSlot(0);if(k==='2')switchSlot(1);
   if(e.key==='Escape'){
-    if(gameActive&&plocked){document.exitPointerLock();if(!gamePaused)pauseGame();}
+    if(gameActive){
+      document.exitPointerLock();
+      if(gamePaused){
+        backMenu();
+      } else {
+        pauseGame();
+      }
+    }
   }
 });
 document.addEventListener('keyup',e=>{
