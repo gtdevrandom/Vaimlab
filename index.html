@@ -294,17 +294,13 @@ select:focus{border-color:var(--a);}
     <div class="wep-grid" id="wg1"></div>
     <div class="section-label">Arme secondaire (touche 2)</div>
     <div class="wep-grid" id="wg2"></div>
-    <div class="section-label">Corps à corps (touche 3)</div>
-    <div style="display:flex;gap:8px;margin-bottom:20px">
-      <div class="wep-card on" onclick="selMelee(this,'knife')" style="flex:1"><div class="wep-name">COUTEAU</div><div class="wep-cls">Melee</div></div>
-      <div class="wep-card" onclick="selMelee(this,'axe')" style="flex:1"><div class="wep-name">HACHE</div><div class="wep-cls">Melee</div></div>
-    </div>
+    <div><div style="text-align:center;color:#7a7a9a;padding:12px;font-size:11px">Corps à corps indisponible</div></div>
     <div class="section-label">Configuration rapide</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
-      <div class="card" onclick="setLoadout('duelist')" style="padding:12px"><div class="card-name" style="font-size:13px">⚡ DUELIST</div><div class="card-desc">Vandal + Ghost + Couteau</div></div>
-      <div class="card" onclick="setLoadout('sniper')" style="padding:12px"><div class="card-name" style="font-size:13px">🔭 SNIPER</div><div class="card-desc">Operator + Sheriff + Couteau</div></div>
-      <div class="card" onclick="setLoadout('eco')" style="padding:12px"><div class="card-name" style="font-size:13px">💸 ECO</div><div class="card-desc">Spectre + Ghost + Couteau</div></div>
-      <div class="card" onclick="setLoadout('spray')" style="padding:12px"><div class="card-name" style="font-size:13px">💥 FULL AUTO</div><div class="card-desc">Phantom + Stinger + Couteau</div></div>
+      <div class="card" onclick="setLoadout('duelist')" style="padding:12px"><div class="card-name" style="font-size:13px">⚡ DUELIST</div><div class="card-desc">Vandal + Ghost</div></div>
+      <div class="card" onclick="setLoadout('sniper')" style="padding:12px"><div class="card-name" style="font-size:13px">🔭 SNIPER</div><div class="card-desc">Operator + Sheriff</div></div>
+      <div class="card" onclick="setLoadout('eco')" style="padding:12px"><div class="card-name" style="font-size:13px">💸 ECO</div><div class="card-desc">Spectre + Ghost</div></div>
+      <div class="card" onclick="setLoadout('spray')" style="padding:12px"><div class="card-name" style="font-size:13px">💥 FULL AUTO</div><div class="card-desc">Phantom + Stinger</div></div>
     </div>
     <button class="launch" onclick="launch()">▶ LANCER</button>
   </div>
@@ -314,21 +310,21 @@ select:focus{border-color:var(--a);}
     <div class="settings-grid">
       <div>
         <div class="section-label">Souris</div>
-        <div class="param"><div class="param-lbl">Sensibilité <span id="lsens">0.40</span></div><input type="range" min="0.05" max="3.0" step="0.05" value="0.4" oninput="cfg.sens=+this.value;document.getElementById('lsens').textContent=(+this.value).toFixed(2)"></div>
-        <div class="param"><div class="param-lbl">Sens ADS <span id="ladsens">0.80</span></div><input type="range" min="0.1" max="1.5" step="0.05" value="0.8" oninput="cfg.adsSensMult=+this.value;document.getElementById('ladsens').textContent=(+this.value).toFixed(2)"></div>
-        <div class="param"><div class="param-lbl">Sens Scope <span id="lssens">0.50</span></div><input type="range" min="0.1" max="1.5" step="0.05" value="0.5" oninput="cfg.scopeSensMult=+this.value;document.getElementById('lssens').textContent=(+this.value).toFixed(2)"></div>
-        <div class="toggle-row"><span class="tlbl">Inverser Y</span><div class="tog" id="tog-invy" onclick="togOpt(this,'invertY')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Accélération souris</span><div class="tog" id="tog-accel" onclick="togOpt(this,'mouseAccel')"></div></div>
+        <div class="param"><div class="param-lbl">Sensibilité <span id="lsens">0.40</span></div><input type="range" min="0.05" max="3.0" step="0.05" value="0.4" oninput="cfg.sens=+this.value;document.getElementById('lsens').textContent=(+this.value).toFixed(2);saveCfg()"></div>
+        <div class="param"><div class="param-lbl">Sens ADS <span id="ladsens">0.80</span></div><input type="range" min="0.1" max="1.5" step="0.05" value="0.8" oninput="cfg.adsSensMult=+this.value;document.getElementById('ladsens').textContent=(+this.value).toFixed(2);saveCfg()"></div>
+        <div class="param"><div class="param-lbl">Sens Scope <span id="lssens">0.50</span></div><input type="range" min="0.1" max="1.5" step="0.05" value="0.5" oninput="cfg.scopeSensMult=+this.value;document.getElementById('lssens').textContent=(+this.value).toFixed(2);saveCfg()"></div>
+        <div class="toggle-row"><span class="tlbl">Inverser Y</span><div class="tog" id="tog-invy" onclick="togOpt(this,'invertY');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Accélération souris</span><div class="tog" id="tog-accel" onclick="togOpt(this,'mouseAccel');saveCfg()"></div></div>
       </div>
       <div>
         <div class="section-label">Gameplay</div>
-        <div class="toggle-row"><span class="tlbl">Son de tir</span><div class="tog on" id="tog-snd" onclick="togOpt(this,'sound')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Headshots seulement</span><div class="tog" id="tog-hs" onclick="togOpt(this,'hsOnly')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Afficher dégâts</span><div class="tog on" id="tog-dmg" onclick="togOpt(this,'showDmg')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Recul automatique (aide)</span><div class="tog" id="tog-rca" onclick="togOpt(this,'recoilAssist')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Mouvement activé</span><div class="tog on" id="tog-mv" onclick="togOpt(this,'movement')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Bobbing arme</span><div class="tog on" id="tog-bob" onclick="togOpt(this,'weaponBob')"></div></div>
-        <div class="toggle-row"><span class="tlbl">Bots infinis HP</span><div class="tog" id="tog-inf" onclick="togOpt(this,'infiniteHP')"></div></div>
+        <div class="toggle-row"><span class="tlbl">Son de tir</span><div class="tog on" id="tog-snd" onclick="togOpt(this,'sound');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Headshots seulement</span><div class="tog" id="tog-hs" onclick="togOpt(this,'hsOnly');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Afficher dégâts</span><div class="tog on" id="tog-dmg" onclick="togOpt(this,'showDmg');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Recul automatique (aide)</span><div class="tog" id="tog-rca" onclick="togOpt(this,'recoilAssist');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Mouvement activé</span><div class="tog on" id="tog-mv" onclick="togOpt(this,'movement');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Bobbing arme</span><div class="tog on" id="tog-bob" onclick="togOpt(this,'weaponBob');saveCfg()"></div></div>
+        <div class="toggle-row"><span class="tlbl">Bots infinis HP</span><div class="tog" id="tog-inf" onclick="togOpt(this,'infiniteHP');saveCfg()"></div></div>
       </div>
       <div class="sg-full">
         <div class="section-label">Performances</div>
@@ -408,6 +404,22 @@ select:focus{border-color:var(--a);}
         <div class="toggle-row"><span class="tlbl">Afficher kill feed</span><div class="tog on" id="tog-kf" onclick="togOpt(this,'showKF')"></div></div>
         <div class="toggle-row"><span class="tlbl">Afficher timer</span><div class="tog on" id="tog-timer" onclick="togOpt(this,'showTimer')"></div></div>
         <div class="toggle-row"><span class="tlbl">Flash screen hit</span><div class="tog on" id="tog-blood" onclick="togOpt(this,'bloodScreen')"></div></div>
+      </div>
+      <div class="sg-full">
+        <div class="section-label">Touches clavier</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <div class="param"><div class="param-lbl">Avant (↑)</div><input type="text" placeholder="W" maxlength="1" style="width:100%;padding:6px;background:#161622;border:1px solid #3a3a55;color:#e8e8f0;border-radius:2px;text-transform:uppercase;text-align:center;" oninput="cfg.key_W=this.value.toUpperCase();saveCfg()" value="W"></div></div>
+          <div class="param"><div class="param-lbl">Gauche (←)</div><input type="text" placeholder="A" maxlength="1" style="width:100%;padding:6px;background:#161622;border:1px solid #3a3a55;color:#e8e8f0;border-radius:2px;text-transform:uppercase;text-align:center;" oninput="cfg.key_A=this.value.toUpperCase();saveCfg()" value="A"></div></div>
+          <div class="param"><div class="param-lbl">Arrière (↓)</div><input type="text" placeholder="S" maxlength="1" style="width:100%;padding:6px;background:#161622;border:1px solid #3a3a55;color:#e8e8f0;border-radius:2px;text-transform:uppercase;text-align:center;" oninput="cfg.key_S=this.value.toUpperCase();saveCfg()" value="S"></div></div>
+          <div class="param"><div class="param-lbl">Droite (→)</div><input type="text" placeholder="D" maxlength="1" style="width:100%;padding:6px;background:#161622;border:1px solid #3a3a55;color:#e8e8f0;border-radius:2px;text-transform:uppercase;text-align:center;" oninput="cfg.key_D=this.value.toUpperCase();saveCfg()" value="D"></div></div>
+        </div>
+      </div>
+      <div class="sg-full">
+        <div class="section-label">Couleurs personnalisées</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="param"><div class="param-lbl">Couleur primaire</div><input type="color" value="#ff4655" oninput="cfg.primaryColor=this.value;saveCfg();applyThemeColors()" style="width:100%;height:40px;border:none;border-radius:2px;cursor:pointer;"></div>
+          <div class="param"><div class="param-lbl">Couleur ennemis</div><input type="color" value="#ff0000" oninput="cfg.enemyColor=this.value;saveCfg();applyThemeColors()" style="width:100%;height:40px;border:none;border-radius:2px;cursor:pointer;"></div>
+        </div>
       </div>
     </div>
     <button class="launch" onclick="launch()">▶ LANCER</button>
@@ -511,7 +523,7 @@ select:focus{border-color:var(--a);}
 const cfg = {
   map:'range', mode:'precision', duration:60, maxTargets:3, infiniteMode:false,
   sizeLevel:3, botHP:100,
-  weapon1:'vandal', weapon2:'ghost', meleeKey:'knife',
+  weapon1:'vandal', weapon2:'ghost', meleeKey:'',
   sens:0.40, adsSensMult:0.80, scopeSensMult:0.50,
   invertY:false, mouseAccel:false,
   sound:true, hsOnly:false, showDmg:true, recoilAssist:false,
@@ -520,7 +532,19 @@ const cfg = {
   fpsLimit:0, renderQuality:2,
   crosshairStyle:'classic', cxLen:6, cxWidth:2, cxGap:4, cxOpacity:1, cxColor:'#ff4655',
   hudOpacity:1, showFPS:true, showKF:true, showTimer:true, bloodScreen:true,
+  // Keyboards & colors
+  key_W:'w', key_A:'a', key_S:'s', key_D:'d', key_Jump:' ', key_Reload:'r', key_Ads:'Alt',
+  theme:'dark', primaryColor:'#ff4655', enemyColor:'#ff0000', accentColor:'#4488ff',
 };
+
+// ════════════════════════════════════════════════════════════
+// LOCALSTORAGE MANAGEMENT
+// ════════════════════════════════════════════════════════════
+function loadCfg(){try{const saved=localStorage.getItem('vaimlab_cfg');if(saved){const data=JSON.parse(saved);Object.assign(cfg,data);}}catch(e){}}
+function saveCfg(){try{localStorage.setItem('vaimlab_cfg',JSON.stringify(cfg));}catch(e){}}
+function loadThemes(){try{const t=localStorage.getItem('vaimlab_themes');return t?JSON.parse(t):{};} catch(e){return {};}}
+function saveThemes(themes){try{localStorage.setItem('vaimlab_themes',JSON.stringify(themes));}catch(e){}}
+loadCfg();
 
 const SZ = {1:0.35,2:0.55,3:0.82,4:1.15,5:1.55};
 const SZNAMES = {1:'Très petit',2:'Petit',3:'Moyen',4:'Grand',5:'Très grand'};
@@ -573,14 +597,14 @@ const WEAPONS = {
     rc:[{x:0,y:6},{x:0,y:12},{x:0,y:18},{x:0,y:24},{x:0,y:30}]},
   outlaw:   {name:'OUTLAW',    cls:'Sniper double',   cat:'sniper',  ammo:2,  rpm:130,  reload:2.5,  dmgH:238, dmgB:140,dmgL:119,mode:'BOLT',     ads:true, zoom:4.0, adsT:0.5, rcMult:3.5, isSniper:true,  isAuto:false, isSemi:false, isMelee:false,
     rc:[{x:0,y:5},{x:0,y:10}]},
-  // Melee
-  knife:    {name:'COUTEAU',   cls:'Corps à corps',   cat:'melee',   ammo:1,  rpm:200,  reload:0,    dmgH:150, dmgB:50, dmgL:50, mode:'MELEE',    ads:false,zoom:1.0, adsT:0,   rcMult:0,   isSniper:false, isAuto:false, isSemi:false, isMelee:true},
+  // Melee - DISABLED
+  // knife:    {name:'COUTEAU',   cls:'Corps à corps',   cat:'melee',   ammo:1,  rpm:200,  reload:0,    dmgH:150, dmgB:50, dmgL:50, mode:'MELEE',    ads:false,zoom:1.0, adsT:0,   rcMult:0,   isSniper:false, isAuto:false, isSemi:false, isMelee:true},
 };
 
 // Cat lists
 const PRIMARIES = ['vandal','phantom','bulldog','guardian','spectre','stinger','bucky','judge','ares','odin','marshal','operator','outlaw'];
 const SIDEARMS  = ['classic','shorty','frenzy','ghost','sheriff'];
-const MELEES    = ['knife'];
+const MELEES    = [];
 
 // ════════════════════════════════════════════════════════════
 // MENU BUILD
@@ -622,6 +646,24 @@ function setLoadout(l){const map={duelist:['vandal','ghost'],sniper:['operator',
 // UI color
 function setUIColor(a,a2,el){document.documentElement.style.setProperty('--a',a);document.documentElement.style.setProperty('--a2',a2);document.querySelectorAll('.color-row:nth-child(1) .color-swatch').forEach(s=>s.classList.remove('on'));el.classList.add('on');}
 function setTheme(t){const themes={dark:{bg:'#080810',bg2:'#0f0f1a'},midnight:{bg:'#030308',bg2:'#08080f'},military:{bg:'#0a0f08',bg2:'#0f1a0f'},neon:{bg:'#04040f',bg2:'#0a0a1f'},blood:{bg:'#1a0505',bg2:'#2a0808'},ice:{bg:'#050810',bg2:'#0a1020'},matrix:{bg:'#000800',bg2:'#001a00'},sunset:{bg:'#1a0f00',bg2:'#2a1a05'}};const th=themes[t]||themes.dark;document.documentElement.style.setProperty('--bg',th.bg);document.documentElement.style.setProperty('--bg2',th.bg2);}
+function applyThemeColors(){document.documentElement.style.setProperty('--a',cfg.primaryColor);document.documentElement.style.setProperty('--a2',cfg.primaryColor+'dd');}
+
+function initializeUI(){
+  // Sliders
+  if(document.getElementById('lsens')) document.querySelector('input[value="0.4"]')&&(document.querySelector('input[value="0.4"]').value=cfg.sens);
+  // Keyboard inputs
+  const keyInputs=document.querySelectorAll('.sg-full:last-child input[type="text"]');
+  if(keyInputs.length>0) keyInputs[0].value=cfg.key_W;
+  if(keyInputs.length>1) keyInputs[1].value=cfg.key_A;
+  if(keyInputs.length>2) keyInputs[2].value=cfg.key_S;
+  if(keyInputs.length>3) keyInputs[3].value=cfg.key_D;
+  // Color inputs
+  const colorInputs=document.querySelectorAll('input[type="color"]');
+  if(colorInputs.length>0) colorInputs[0].value=cfg.primaryColor;
+  if(colorInputs.length>1) colorInputs[1].value=cfg.enemyColor;
+  applyThemeColors();
+}
+setTimeout(initializeUI,100);
 
 // Crosshair
 function setCXColor(c,el){cfg.cxColor=c;document.querySelectorAll('#cx-colors .color-swatch').forEach(s=>s.classList.remove('on'));el.classList.add('on');previewCX();}
@@ -690,6 +732,9 @@ let gameActive=false,gamePaused=false,plocked=false;
 let camYaw=0,camPitch=0;
 let recoilPV=0,recoilYV=0;
 let wepBobT=0;
+// Weapon return after recoil
+let wepStartPos=new THREE.Vector3();
+let wepStartRot=new THREE.Euler();
 let lastFrameT=0,fpsCounter=0,fpsTimer=0,currentFPS=0;
 let frameThrottle=0;
 
@@ -716,7 +761,7 @@ const gs={
   burstFired:0,
 };
 
-const SLOTS=['vandal','ghost','knife'];
+const SLOTS=['vandal','ghost',''];
 let activeSlot=0;
 
 function curWep(){return WEAPONS[SLOTS[gs.slot]]||WEAPONS.vandal;}
@@ -928,7 +973,7 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.04,0.11,0.06),bodyM,0.12,-0.09,0);
     // Suppressor (operator)
     if(key==='operator')addP(new THREE.CylinderGeometry(0.04,0.04,0.12,8),metalM,bLen+0.06,0,0,0,0,Math.PI/2);
-    g.position.set(-0.28,-0.24,-0.56);g.rotation.z=Math.PI/2;
+    g.position.set(-0.28,-0.24,-0.56);g.rotation.z=0;
   } else if(w.cat==='sidearm'||key==='ghost'||key==='sheriff'){
     const bLen=key==='sheriff'?0.46:0.3;
     addP(new THREE.CylinderGeometry(0.022,0.022,bLen,8),metalM,bLen/2,0.01,0,0,0,Math.PI/2);
@@ -938,7 +983,7 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.04,0.12,0.04),bodyM,-0.1,-0.12,0);
     addP(new THREE.BoxGeometry(0.015,0.06,0.02),metalM,-0.04,-0.05,0,0.3,0,0);
     addP(new THREE.BoxGeometry(0.015,0.025,0.04),accM,bLen*0.8,0.07,0);
-    g.position.set(-0.25,-0.26,-0.38);g.rotation.z=Math.PI/2;
+    g.position.set(-0.25,-0.26,-0.38);g.rotation.z=0;
   } else if(w.cat==='smg'){
     addP(new THREE.CylinderGeometry(0.022,0.022,0.48,8),metalM,0.24,0,0,0,0,Math.PI/2);
     addP(new THREE.BoxGeometry(0.56,0.1,0.065),bodyM,0,0.01,0);
@@ -947,14 +992,14 @@ function buildWepModel(key,w){
     addP(new THREE.BoxGeometry(0.15,0.06,0.05),darkM,-0.27,0.02,0);
     addP(new THREE.BoxGeometry(0.025,0.025,0.04),accM,0.22,0.07,0);
     addP(new THREE.BoxGeometry(0.02,0.11,0.068),accM,0.1,0,0);
-    g.position.set(-0.26,-0.23,-0.44);g.rotation.z=Math.PI/2;
+    g.position.set(-0.26,-0.23,-0.44);g.rotation.z=0;
   } else if(w.cat==='shotgun'){
     addP(new THREE.CylinderGeometry(0.03,0.03,0.7,8),metalM,0.35,0,0,0,0,Math.PI/2);
     addP(new THREE.BoxGeometry(0.6,0.12,0.07),bodyM,0,0,0);
     addP(new THREE.BoxGeometry(0.25,0.09,0.06),darkM,-0.28,0.02,0);
     addP(new THREE.BoxGeometry(0.06,0.16,0.07),darkM,-0.12,-0.1,0);
     if(key==='judge')addP(new THREE.BoxGeometry(0.04,0.18,0.06),bodyM,0.05,-0.12,0);
-    g.position.set(-0.28,-0.23,-0.48);g.rotation.z=Math.PI/2;
+    g.position.set(-0.28,-0.23,-0.48);g.rotation.z=0;
   } else if(w.cat==='heavy'){
     addP(new THREE.CylinderGeometry(0.03,0.03,key==='odin'?1.0:0.8,8),metalM,key==='odin'?0.5:0.4,0.01,0,0,0,Math.PI/2);
     addP(new THREE.BoxGeometry(key==='odin'?0.75:0.7,0.13,0.08),bodyM,0,0,0);
@@ -964,7 +1009,7 @@ function buildWepModel(key,w){
     // Bipod
     addP(new THREE.BoxGeometry(0.015,0.12,0.005),metalM,0.35,-0.07,-0.02);
     addP(new THREE.BoxGeometry(0.015,0.12,0.005),metalM,0.35,-0.07,0.02);
-    g.position.set(-0.3,-0.24,-0.52);g.rotation.z=Math.PI/2;
+    g.position.set(-0.3,-0.24,-0.52);g.rotation.z=0;
   } else {
     // RIFLES (vandal,phantom,bulldog,guardian)
     const bLen=key==='bulldog'?0.55:key==='guardian'?0.7:0.65;
@@ -984,8 +1029,11 @@ function buildWepModel(key,w){
       addP(new THREE.CircleGeometry(0.032,16),lM,0.17,0.12,0,0,-Math.PI/2,0);
     }
     if(key==='bulldog'){addP(new THREE.CylinderGeometry(0.03,0.03,0.08,6),metalM,bLen+0.04,0.005,0,0,0,Math.PI/2);}
-    g.position.set(-0.28,-0.22,-0.48);g.rotation.z=Math.PI/2;
+    g.position.set(-0.28,-0.22,-0.48);g.rotation.z=0;
   }
+  // Save initial position and rotation for return after recoil
+  if(g.position) wepStartPos.copy(g.position);
+  if(g.rotation) wepStartRot.copy(g.rotation);
   return g;
 }
 
@@ -1348,6 +1396,16 @@ function applyRecoil(){
   if(wepGroup){wepGroup.rotation.x-=0.06*m;wepGroup.position.z-=0.015*m;}
 }
 
+// ── WEAPON RETURN AFTER RECOIL ──
+function updateWeaponReturn(dt){
+  if(!wepGroup||!gs.holding)return;
+  // Smoothly return weapon to starting position/rotation
+  const returnSpeed=6;
+  wepGroup.position.lerp(wepStartPos,returnSpeed*dt);
+  wepGroup.rotation.x+=(wepStartRot.x-wepGroup.rotation.x)*returnSpeed*dt;
+  wepGroup.rotation.z+=(wepStartRot.z-wepGroup.rotation.z)*returnSpeed*dt;
+}
+
 // ── AUTO FIRE ──
 function startAutoFire(){
   const w=curWep();
@@ -1412,7 +1470,7 @@ function updateWepHUD(){
   document.getElementById('ammax').textContent=w.ammo;
   // Slot UI
   const slotsEl=document.getElementById('wslots');
-  slotsEl.innerHTML=['1','2','3'].map((n,i)=>`<div class="wslot ${i===gs.slot?'cur':''}">${n} ${WEAPONS[SLOTS[i]].name}</div>`).join('');
+  slotsEl.innerHTML=['1','2'].map((n,i)=>`<div class="wslot ${i===gs.slot?'cur':''}">${n} ${WEAPONS[SLOTS[i]]?.name||'---'}</div>`).join('');
 }
 
 let hmTO=null;
@@ -1556,7 +1614,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('wheel',e=>{
   if(!gameActive||gamePaused)return;
   const dir=e.deltaY>0?1:-1;
-  switchSlot((gs.slot+dir+3)%3);
+  switchSlot((gs.slot+dir+2)%2);
 });
 document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
@@ -1564,7 +1622,7 @@ document.addEventListener('keydown',e=>{
   if(k==='s')keys.s=true;if(k==='d')keys.d=true;
   if(k==='shift')keys.shift=true;if(k===' '){keys.space=true;if(isGrounded&&gameActive&&!gamePaused&&!lastSpacePressed){playerVelY=JUMP_FORCE;isGrounded=false;lastSpacePressed=true;}}
   if(k==='r'&&gameActive&&!gamePaused)triggerReload();
-  if(k==='1')switchSlot(0);if(k==='2')switchSlot(1);if(k==='3')switchSlot(2);
+  if(k==='1')switchSlot(0);if(k==='2')switchSlot(1);
   if(e.key==='Escape'){
     if(gameActive&&plocked){document.exitPointerLock();if(!gamePaused)pauseGame();}
   }
@@ -1661,6 +1719,7 @@ function gameLoop(now){
   updateBots(dt);
   updateParticles(dt);
   updateWepBob(dt);
+  updateWeaponReturn(dt);
 
   renderer.render(scene,camera);
   requestAnimationFrame(gameLoop);
@@ -1699,14 +1758,15 @@ function launch(){
   document.getElementById('hud').classList.remove('hidden');
   document.getElementById('c2p').classList.remove('hidden');
   document.getElementById('fps').style.opacity=cfg.showFPS?'1':'0';
+  applyThemeColors();
 
   SLOTS[0]=cfg.weapon1;SLOTS[1]=cfg.weapon2;SLOTS[2]=cfg.meleeKey;
-  const w0=WEAPONS[SLOTS[0]],w1=WEAPONS[SLOTS[1]],w2=WEAPONS[SLOTS[2]];
+  const w0=WEAPONS[SLOTS[0]],w1=WEAPONS[SLOTS[1]];
 
   Object.assign(gs,{
     score:0,shots:0,hits:0,headHits:0,kills:0,totalDmg:0,
     timer:cfg.duration,hitTimes:[],comboCt:0,
-    slot:0,ammo:[w0.ammo,w1.ammo,1],
+    slot:0,ammo:[w0.ammo,w1.ammo,0],
     reloading:false,ads:false,shotsFired:0,lastShot:0,holding:false,burstFired:0
   });
   recoilPV=0;recoilYV=0;camYaw=0;camPitch=0;
@@ -1735,7 +1795,7 @@ function openWeaponMenu(){
   const choices=[];
   PRIMARIES.forEach(k=>{choices.push({name:WEAPONS[k].name,key:k,slot:0});});
   SIDEARMS.forEach(k=>{choices.push({name:WEAPONS[k].name,key:k,slot:1});});
-  choices.push({name:WEAPONS.knife.name,key:'knife',slot:2});
+  // Melee disabled
   const current=[cfg.weapon1,cfg.weapon2,cfg.meleeKey];
   const dialogHtml=`<div style="position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;" id="weaponDialog"><div style="background:#0f0f1a;border:1px solid #ff4655;padding:20px;border-radius:4px;max-height:80vh;overflow-y:auto;width:90%;max-width:400px;"><div style="font-size:18px;color:#ff4655;margin-bottom:16px;letter-spacing:2px;font-weight:700;">CHANGER ARME</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">${choices.map(c=>`<button onclick="switchWeaponInGame(this,'${c.key}',${c.slot})" style="background:${current[c.slot]===c.key?'rgba(255,70,85,0.3)':'rgba(255,255,255,0.05)'};border:1px solid ${current[c.slot]===c.key?'#ff4655':'rgba(255,255,255,0.1)'};padding:10px;color:#e8e8f0;cursor:pointer;border-radius:2px;font-family:Rajdhani;font-size:12px;letter-spacing:1px;">${c.name}</button>`).join('')}</div><button onclick="closeWeaponDialog()" style="width:100%;margin-top:12px;padding:10px;background:#ff4655;border:none;color:white;cursor:pointer;border-radius:2px;font-family:Rajdhani;font-size:12px;letter-spacing:1px;">FERMER</button></div></div>`;
   document.body.insertAdjacentHTML('beforeend',dialogHtml);
